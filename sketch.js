@@ -104,7 +104,7 @@ let dimension = 7;
 let drawing = [];
 let input;
 
-let state = 0; 
+//let state = 0; 
 //0 = guessing
 //1 = learning  
 
@@ -116,39 +116,22 @@ let result;
 //preparing neural net
 const net = new brain.NeuralNetwork();
 const trainingData = [
-  { input: zero, output: { zero: 1 } },
-  { input: one, output: { one: 1 } },
-  { input: two, output: { two: 1 } },
-  { input: three, output: { three: 1 } },
-  { input: four, output: { four: 1 } },
-  { input: five, output: { five: 1 } },
-  { input: six, output: { six: 1 } },
-  { input: seven, output: { seven: 1 } },
-  { input: eight, output: { eight: 1 } },
-  { input: nine, output: { nine: 1 } }
+  { input: zero, output: { 0: 1 } },
+  { input: one, output: { 1: 1 } },
+  { input: two, output: { 2: 1 } },
+  { input: three, output: { 3: 1 } },
+  { input: four, output: { 4: 1 } },
+  { input: five, output: { 5: 1 } },
+  { input: six, output: { 6: 1 } },
+  { input: seven, output: { 7: 1 } },
+  { input: eight, output: { 8: 1 } },
+  { input: nine, output: { 9: 1 } }
 ];
   
 net.train(trainingData, { log: (stats) => console.log(stats) });
   
 function setup() {
-  //this should be a function... 
-  data = [
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-  ];
-    
-  drawing = [];
-  linearData = [];
-    
-  createCanvas(500, 500);
-  background(240);
-  grid();
-    
+  reset();   
   CorrectButton = createButton('Correct');
   CorrectButton.position(10,510);
   CorrectButton.mousePressed(correctChoice);
@@ -159,7 +142,7 @@ function setup() {
 
   input = createSlider(0,9,5,1);
   input.position(200, 510)
-  input.style('width', '80px');
+  input.style('width', '160px');
     
   testButton = createButton('Test');
   testButton.position(450,510);
@@ -182,10 +165,6 @@ function draw() {
     ellipse(coords[0], coords[1], 20);
     drawing.push(coords);
   }
-
-  if (state == 1){
-
-  }
 }
 
 function correctChoice(){
@@ -193,22 +172,38 @@ function correctChoice(){
     { input: linearData, output: { result: 1 } },
   );
   net.train(trainingData);
-  setup();
+  reset();
 }
 
 function wrongChoice() {
-  let value = input.value;
-  if (value != ''){
-    trainingData.push(
-      { input: linearData, output: { value: 1 } }
-    );
-    net.train(trainingData);
-    setup();
-  }else{
-    setup();
-  }
+  let value = input.value();
+  console.log(value);
+  trainingData.push(
+    { input: linearData, output: { value: 1 } }
+  );
+  net.train(trainingData);
+  reset();
 }
-  
+
+function reset(){
+  data = [
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+  ];
+    
+  drawing = [];
+  linearData = [];
+    
+  createCanvas(500, 500);
+  background(240);
+  grid();
+}
+
 function test(){
   console.log(net.run([
     1,1,1,1,1,1,1,
@@ -235,7 +230,7 @@ function mouseReleased() {
       for (let y = 0; y < dimension; y++){
         linearData.push(data[x][y]);
         if (data[y][x] == 1){
-          fill(200, 0, 50);
+          fill(51, 204, 204);
           rect((width/dimension)*x, (height/dimension)*y, width/dimension, height/dimension);
         }
       }
