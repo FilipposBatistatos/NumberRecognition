@@ -127,8 +127,9 @@ const trainingData = [
   { input: eight, output: { 8: 1 } },
   { input: nine, output: { 9: 1 } }
 ];
-  
-net.train(trainingData, { log: (stats) => console.log(stats) });
+
+//train the network for the first time
+net.train(trainingData); //to see iterations in console add [,{ log: (stats) => console.log(stats) }] to .train function
   
 function setup() {
   reset();   
@@ -137,17 +138,17 @@ function setup() {
   CorrectButton.mousePressed(correctChoice);
 
   wrongButton = createButton('Wrong');
-  wrongButton.position(80,510);
+  wrongButton.position(390,510);
   wrongButton.mousePressed(wrongChoice);
 
   input = createSlider(0,9,5,1);
-  input.position(200, 510)
+  input.position(170, 510)
   input.style('width', '160px');
     
-  testButton = createButton('Test');
-  testButton.position(450,510);
-  testButton.mousePressed(test);
-    
+  //debugging the function of the neural net
+  // testButton = createButton('Test');
+  // testButton.position(450,510);
+  // testButton.mousePressed(test);
 }
   
 function draw() {
@@ -167,6 +168,8 @@ function draw() {
   }
 }
 
+//----------------------------------------------------------------------------------------------------
+//button functions 
 function correctChoice(){
   trainingData.push(
     { input: linearData, output: { result: 1 } },
@@ -185,25 +188,6 @@ function wrongChoice() {
   reset();
 }
 
-function reset(){
-  data = [
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-  ];
-    
-  drawing = [];
-  linearData = [];
-    
-  createCanvas(500, 500);
-  background(240);
-  grid();
-}
-
 function test(){
   console.log(net.run([
     1,1,1,1,1,1,1,
@@ -215,7 +199,9 @@ function test(){
     1,0,0,0,0,0,0
   ]));
 }
-  
+
+//----------------------------------------------------------------------------------------------------
+//trigger the alrogthim on mouse release
 function mouseReleased() {
   if ((mouseX <= width) && (mouseY <= height)){
     for (let i = 0; i < drawing.length; i++){
@@ -237,12 +223,14 @@ function mouseReleased() {
     }
     //feed data into the network for processing
     result = printResult(net.run(linearData));
-    console.log(result);
-    drawResult();
+    console.log(result); //console log for debugging
+    drawResult(result); // draw the answer on the screen
     state = 1;
   }
 }
 
+//----------------------------------------------------------------------------------------------------
+//assisting functions
 function printResult(results){
   //should be redundant to brain.likely
   //as of now that does not work as expected
@@ -257,14 +245,33 @@ function printResult(results){
   return highestNumber;
 }
   
-function drawResult(){
+function drawResult(textToDraw){
   fill(0);
   textAlign(CENTER, CENTER);
-  textSize(80);
-  text(result, width / 2, height / 2);
+  if (textToDraw.length > 1){
+    textSize(80);
+  }else{
+    textSize(180);
+  }
+  text(textToDraw, width / 2, height / 2);
 }
 
-function grid() {
+function reset(){
+  data = [
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0],
+  ];
+    
+  drawing = [];
+  linearData = [];
+    
+  createCanvas(500, 500);
+  background(240);
   stroke(200);
     
   for (let y = 0; y < height; y+=height/dimension){
